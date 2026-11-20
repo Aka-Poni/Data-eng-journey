@@ -1,0 +1,38 @@
+CREATE DATABASE IF NOT EXISTS sensor_lab;
+USE sensor_lab;
+CREATE TABLE IF NOT EXISTS tank_readings (
+    reading_id BIGINT AUTO_INCREMENT PRIMARY KEY, -- Integer auto incrementing primary key. Reference value for each reading
+    tank_id VARCHAR(15) NOT NULL, -- Tank identifier. Stored as text, can't be null
+    reading_time DATETIME NOT NULL, -- Date and time of the reading, can't be null; Uses local time
+    level_pct DECIMAL(5,2) NOT NULL, -- Level %, can't be null, can be 0
+    ph DECIMAL(4,2) NOT NULL, -- Measured pH, two decimal places
+    temperature_c DECIMAL(5,2) DEFAULT NULL -- Measured temperature in C. Nullable: NULL means sensor failure
+);
+
+-- DESCRIBE tank_readings;
+
+-- Test data: 3 tanks, 2 days, 20 readings
+-- Anomalies: pH outside 6.5-8.5 (ids 3, 8, 17, 19), level > 95% (ids 5, 16), no temperature (id 11)
+-- Date/Time standard: YYYY-MM-DD HH:MM:SS (24-hour clock)
+INSERT INTO tank_readings (tank_id, reading_time, level_pct, ph, temperature_c) VALUES
+    ('TQ-01', '2026-11-18 08:00:00', 72.40, 7.10, 24.30),
+    ('TQ-01', '2026-11-18 12:00:00', 70.85, 7.25, 25.60),
+    ('TQ-01', '2026-11-18 16:00:00', 68.20, 6.12, 26.10),  -- low pH 
+    ('TQ-01', '2026-11-19 08:00:00', 81.50, 7.05, 23.90),
+    ('TQ-01', '2026-11-19 12:00:00', 96.40, 7.30, 25.20),  -- high level
+    ('TQ-01', '2026-11-19 16:00:00', 93.75, 7.45, 26.40),
+    ('TQ-02', '2026-11-18 08:00:00', 45.30, 7.80, 22.70),
+    ('TQ-02', '2026-11-18 12:00:00', 47.90, 8.91, 23.80),  -- high pH
+    ('TQ-02', '2026-11-18 16:00:00', 50.15, 8.20, 24.50),
+    ('TQ-02', '2026-11-19 08:00:00', 38.60, 7.95, 22.10),
+    ('TQ-02', '2026-11-19 12:00:00', 41.25, 8.05, NULL),   -- sensor failure
+    ('TQ-02', '2026-11-19 16:00:00', 44.80, 7.60, 24.90),
+    ('TQ-02', '2026-11-19 20:00:00', 46.10, 7.70, 23.40),
+    ('TQ-03', '2026-11-18 08:00:00', 88.20, 6.80, 25.10),
+    ('TQ-03', '2026-11-18 12:00:00', 91.45, 6.65, 26.30),
+    ('TQ-03', '2026-11-18 16:00:00', 98.10, 6.90, 27.00),  -- high level    
+    ('TQ-03', '2026-11-18 20:00:00', 85.60, 5.85, 25.80),  -- low pH
+    ('TQ-03', '2026-11-19 08:00:00', 79.35, 6.95, 24.20),
+    ('TQ-03', '2026-11-19 12:00:00', 82.70, 8.74, 25.50),  -- high pH
+    ('TQ-03', '2026-11-19 16:00:00', 84.05, 7.15, 26.20);
+
