@@ -60,6 +60,15 @@ GROUP BY tank_id
 HAVING COUNT(*) > 1 -- Show only tanks with more than one anomaly after grouping
 ;
 
+-- Query 07.b: Reverse WHERE/HAVING order
+/* SELECT tank_id,
+    COUNT(*) AS anomalous_readings 
+FROM tank_readings
+WHERE COUNT(*)>1 -- Count can't run here, there is no groups created yet
+GROUP BY tank_id 
+HAVING ph <6.5 OR ph>8.5 -- Won't work, no single pH value per group
+; */
+
 -- Query 08: Show last reading from each tank and include their pH readings with GROUP BY only.
 -- Fails by design, will be solved in 04_subqueries.sql
 /* SELECT tank_id,
