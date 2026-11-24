@@ -64,10 +64,27 @@ HAVING COUNT(*) > 1 -- Show only tanks with more than one anomaly after grouping
 /* SELECT tank_id,
     COUNT(*) AS anomalous_readings 
 FROM tank_readings
-WHERE COUNT(*)>1 -- Count can't run here, there is no groups created yet
+WHERE COUNT(*)>1 -- Count can't run here, there are no groups created yet
 GROUP BY tank_id 
 HAVING ph <6.5 OR ph>8.5 -- Won't work, no single pH value per group
 ; */
+
+-- Query 07.c: Tanks whose max ph reading went over 8.5 (NO WHERE)
+SELECT tank_id,
+    COUNT(*) AS total_readings -- Counts all readings
+FROM tank_readings 
+GROUP BY tank_id -- Groups rows by tank_id
+HAVING MAX(ph)>8.5 -- Keeps the group if its highest pH is above 8.5
+;
+
+-- Query 07.d: Tanks whose max ph reading went over 8.5 (NO HAVING)
+SELECT tank_id,
+    COUNT(*) AS over_readings -- counts the readings AFTER WHERE filters it
+FROM tank_readings
+WHERE ph>8.5 -- filters rows BEFORE grouping
+GROUP BY tank_id 
+
+;
 
 -- Query 08: Show last reading from each tank and include their pH readings with GROUP BY only.
 -- Fails by design, will be solved in 04_subqueries.sql
