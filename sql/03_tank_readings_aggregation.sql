@@ -9,9 +9,9 @@ GROUP BY tank_id -- Need to group by tank_id to get the count per tank
 
 -- Query 02: Minimum, maximum and average pH per tank, rounded to 2 decimal places
 SELECT tank_id,
-    ROUND(MIN(ph),2) AS min_ph, -- Round tank_reading minimum ph value with 2 decimal places
-    ROUND(MAX(ph),2) AS max_ph, -- Round tank_reading maximum ph value with 2 decimal places
-    ROUND(AVG(ph),2) AS avg_ph -- Round tank_reading average ph value with 2 decimal places
+    MIN(ph) AS min_ph, -- (ROUND unnecessary, table values have 2 decimals already)
+    MAX(ph) AS max_ph, -- (ROUND unnecessary, table values have 2 decimals already)
+    ROUND(AVG(ph),2) AS avg_ph -- Round tank_reading average ph value with 2 decimal places (ROUND needed)
 FROM tank_readings
 GROUP BY tank_id -- Collapse tank_id ph values in a single line
 ;
@@ -48,7 +48,7 @@ SELECT tank_id,
     ROUND(AVG(level_pct),2) AS avg_level_pct -- Get average level_pct per tank
 FROM tank_readings
 GROUP BY tank_id
-HAVING AVG(level_pct) > 70 -- Show only tanks with high level readings
+HAVING AVG(level_pct) > 70 -- Keep only tanks whose average level is above 70%
 ;
 
 -- Query 07: Tanks with more than one anomalous pH reading
@@ -60,11 +60,12 @@ GROUP BY tank_id
 HAVING COUNT(*) > 1 -- Show only tanks with more than one anomaly after grouping
 ;
 
--- Query 08: Show last reading from each tank and include their pH readings with GROUP BY only
-SELECT tank_id,
+-- Query 08: Show last reading from each tank and include their pH readings with GROUP BY only.
+-- Fails by design, will be solved in 04_subqueries.sql
+/* SELECT tank_id,
     MAX(reading_time) AS last_reading, -- Get last reading time
     ph AS last_ph -- Get last ph value
 FROM tank_readings
 GROUP BY -- Won't work because it can't know which ph value to show for each tank_id, since there are multiple ph values per tank_id
     tank_id
-;
+;  */
