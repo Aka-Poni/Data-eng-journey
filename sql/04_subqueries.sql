@@ -110,3 +110,61 @@ ORDER BY
     below the overall average used in Q04(7.38) but above the TQ-01 average (7.045)
     reading_id 7: Appears only in Q04. Its pH is 7.80,
     above the overall average used in Q04 (7.38) but below the TQ-02 average (8.03) */
+
+-- Q06.a: All readings from tanks with at least one reading ph>8.5
+/*  Expected results:
+    TQ-02 - 7 rows
+    TQ-03 - 7 rows
+*/
+SELECT
+    tr.reading_id,
+    tr.tank_id,
+    tr.ph
+FROM tank_readings AS tr
+WHERE EXISTS (
+    SELECT 1
+    FROM tank_readings AS sq
+    WHERE sq.ph > 8.5
+    AND sq.tank_id=tr.tank_id
+)
+ORDER BY
+    tr.reading_id
+;
+
+-- Q06.b: Show only tanks with at least one reading ph>8.5 (DISTINCT)
+/*  Expected results:
+    TQ-02 - 1 row
+    TQ-03 - 1 row
+*/
+SELECT DISTINCT 
+    tr.tank_id
+FROM tank_readings AS tr
+WHERE EXISTS (
+    SELECT 1
+    FROM tank_readings AS sq
+    WHERE sq.ph > 8.5 
+    AND sq.tank_id=tr.tank_id
+)
+ORDER BY
+    tr.tank_id
+;
+
+-- Q06.c: All readings from tanks with no readings ph>8.5 (reading_id, tank_id, ph)
+/*  Expected results:
+    TQ-01 - 6 rows
+*/
+
+SELECT
+    tr.reading_id,
+    tr.tank_id,
+    tr.ph
+FROM tank_readings AS tr
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM tank_readings AS sq
+    WHERE sq.ph > 8.5
+    AND sq.tank_id=tr.tank_id
+)
+ORDER BY
+    tr.reading_id
+;
