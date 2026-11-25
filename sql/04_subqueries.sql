@@ -71,3 +71,42 @@ WHERE ph > (
     FROM tank_readings
 )
 ;
+
+-- Query 05: Show readings above the average for each tank.
+/* -- Calculate the average ph for each tank.
+SELECT
+    tank_id,
+    AVG(ph) as avg_ph
+FROM tank_readings
+GROUP BY tank_id
+; */
+
+/*  Averages: 01: 7.045; 02: 8.03; 03: 7.005714
+    Expected results:
+    01: 5 rows
+    02: 3 rows
+    03: 2 rows
+ */
+
+SELECT
+    tr.reading_id,
+    tr.tank_id,
+    tr.ph
+FROM tank_readings AS tr
+WHERE tr.ph > (
+    SELECT
+        AVG(sq.ph)
+    FROM tank_readings AS sq -- sq alias to indicate subquery table
+    WHERE sq.tank_id = tr.tank_id
+    )
+ORDER BY
+    tr.tank_id,
+    tr.reading_id
+;
+/*  Q05 returns different results since it searches for above average readings using the tank's own average,
+    while Q04 filters the table using a single average for all of them.
+    e.g.:
+    reading_id 1: Appears only in Q05. The ph for reading_id 1 is 7.10,
+    below the overall average used in Q04(7.38) but above the TQ-01 average (7.045)
+    reading_id 7: Appears only in Q04. Its pH is 7.80,
+    above the overall average used in Q04 (7.38) but below the TQ-02 average (8.03) */
