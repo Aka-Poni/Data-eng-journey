@@ -51,4 +51,23 @@ JOIN (
     ON tr.tank_id = last_readings.tank_id
     AND tr.reading_time = last_readings.last_reading_time 
 ;
-    
+
+-- Query 04: Readings above the average ph across all tanks. (reading_id, tank_id, reading_time, ph)
+/* --Average ph standalone query
+SELECT
+    AVG(ph) AS avg_ph
+FROM tank_readings
+-- avg_ph = 7.38 */
+-- Expected results: 9
+SELECT 
+    reading_id,
+    tank_id,
+    reading_time,
+    ph
+FROM tank_readings
+WHERE ph > (
+    SELECT
+        AVG(ph)
+    FROM tank_readings
+)
+;
