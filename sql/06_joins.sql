@@ -48,3 +48,23 @@ LEFT JOIN tank_readings AS rd
 GROUP BY
     reg.tank_id -- group by reg.tank_id: rd.tank_id is NULL for TQ-04
 ;
+
+-- Query 04: Count readings and maintenances per tank, in a single query with LEFT JOIN and COUNT
+/* Expected results:
+One row per tank
+Wanted: 4 rows - TQ-01: 2/6, TQ-02: 1/7, TQ-03: 0/7, TQ-04: 0/0
+Actual: 4 rows - TQ-01: 12/12, TQ-02: 7/7, TQ-03: 0/7, TQ-04: 0/0  
+WRONG BY DESIGN, JOIN fan-out multiplies rows. Fixed in Q04.b
+*/
+SELECT
+    reg.tank_id,
+    COUNT(mt.maintenance_id) AS total_maintenance,
+    COUNT(rd.reading_id) AS total_readings
+FROM tank_registry AS reg
+LEFT JOIN tank_maintenance AS mt
+    ON reg.tank_id = mt.tank_id
+LEFT JOIN tank_readings AS rd
+    ON rd.tank_id = reg.tank_id
+GROUP BY
+    reg.tank_id
+;
